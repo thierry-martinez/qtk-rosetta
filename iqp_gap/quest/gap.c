@@ -59,11 +59,27 @@ struct monomial random_monomial(size_t variables, size_t max_degree) {
   if (result.degree > variables) {
     result.degree = variables;
   }
+  bool taken[variables];
+  size_t i;
+  for (i = 0; i < variables; i++) {
+    taken[i] = false;
+  }
   short d;
-  int from = 0;
   for (d = 0; d < result.degree; d++) {
-    result.x[d] = from + rand() % (variables - from - result.degree + d + 1);
-    from = result.x[d] + 1;
+    size_t rank = rand() % (variables - d);
+    size_t p;
+    size_t index = 0;
+    while (taken[index]) {
+      index++;
+    }
+    for (p = 0; p < rank; p++) {
+      index++;
+      while (taken[index]) {
+	index++;
+      }
+    }
+    taken[index] = true;
+    result.x[d] = index;
   }
   return result;
 }

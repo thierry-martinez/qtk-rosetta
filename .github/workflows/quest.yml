@@ -11,5 +11,5 @@ jobs:
           ./initialize.sh
       - name: Test
         run: |
-          make -C iqp_gap/quest test
+          make -C iqp_gap/quest check
           

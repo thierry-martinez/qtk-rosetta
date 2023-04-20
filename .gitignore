@@ -1,0 +1,6 @@
+*~
+.hypothesis/
+__pycache__/
+/iqp_gap/quest/check_iqp_gap
+*.o
+

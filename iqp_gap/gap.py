@@ -14,7 +14,7 @@ def gap(poly):
 
     >>> import sympy
     >>> _, x, y, z = sympy.polys.rings.ring('x, y, z', sympy.GF(2))
-    >>> poly_gap(x * y * z + x * z + y * z + x)
+    >>> gap(x * y * z + x * z + y * z + x)
     2
     """
     return sum(

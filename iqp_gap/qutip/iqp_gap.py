@@ -8,23 +8,8 @@ Reference: https://arxiv.org/pdf/1504.07999.pdf
     Michael J. Bremner,1 Ashley Montanaro,2 and Dan J. Shepherd
 """
 
+import iqp_gap
 import qutip
-
-
-def polynomial_of_monomial(monomial, polyring):
-    """
-    Return a polynomial from the coefficient tuple `monomial`.
-
-    (The following examples can be checked with `pytest --doctest-modules`.)
-
-    >>> import sympy
-    >>> P, x, y, z = sympy.polys.rings.ring('x, y, z', sympy.polys.domains.RR)
-    >>> polynomial_of_monomial((1, 1, 0), P)
-    x*y
-    """
-    poly = polyring.zero
-    poly[monomial] = 1
-    return poly
 
 
 def gap(poly):
@@ -72,7 +57,7 @@ def gap(poly):
             case _:
                 raise Exception(
                     f"""Unsupported monomial: {
-                        polynomial_of_monomial(monom, polyring)
+                        iqp_gap.polynomial_of_monomial(monom, polyring)
                     }"""
                 )
     for i in range(N):

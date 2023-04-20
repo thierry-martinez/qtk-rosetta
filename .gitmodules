@@ -1,6 +1,6 @@
-[submodule "iqp_gap/quest/deps/check"]
-	path = iqp_gap/quest/deps/check
-	url = https://github.com/libcheck/check.git
-[submodule "iqp_gap/quest/deps/QuEST"]
-	path = iqp_gap/quest/deps/QuEST
+[submodule "deps/QuEST"]
+	path = deps/QuEST
 	url = https://github.com/QuEST-Kit/QuEST.git
+[submodule "deps/check"]
+	path = deps/check
+	url = https://github.com/libcheck/check.git

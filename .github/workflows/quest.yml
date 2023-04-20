@@ -5,10 +5,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Setup Python requirements
+      - name: Setup QuEST
         run: |
-          pip install -r requirements.txt
+          cd deps
+          ./initialize.sh
       - name: Test
         run: |
-          pytest
+          make -C iqp_gap/quest check
           

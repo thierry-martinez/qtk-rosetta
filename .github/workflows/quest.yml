@@ -1,0 +1,15 @@
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup QuEST
+        run: |
+          cd deps
+          ./initialize.sh
+      - name: Test
+        run: |
+          make -C iqp_gap/quest test
+          

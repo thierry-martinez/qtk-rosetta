@@ -30,16 +30,14 @@ START_TEST (test_iqp_gap)
   QuESTEnv env = createQuESTEnv();
   srand(time(NULL));
   int i;
-  for (i = 0; i < 8; i++) {
-    struct polynomial *p = random_polynomial(5, 5, 1);
-    Qureg qureg = createDensityQureg(p->variables, env);
+  for (i = 0; i < 64; i++) {
+    struct polynomial *p = random_polynomial(16, 16, 3);
+    Qureg qureg = createQureg(p->variables, env);
     iqp_gap(qureg, p);
-    qreal result = calcProbOfOutcome(qureg, 0, 0);
-    fprintf(stderr, "variables: %lu\n", p->variables);
-    output_polynomial(stderr, p);
-    fflush(stderr);
+    qreal result = getProbAmp(qureg, 0);
     double analytical_result = pow(((double) gap(p)) / (1 << p->variables), 2);
     ck_assert_float_eq_tol(result, analytical_result, 0.0001);
+    destroyQureg(qureg, env);
     free(p);
   }
 }
@@ -49,7 +47,6 @@ Suite *iqp_gap_suite(void) {
   Suite *s;
   TCase *tc_core;
   s = suite_create("iqp_gap");
-
   tc_core = tcase_create("Core");
   tcase_set_timeout(tc_core, 3600);
   tcase_add_test(tc_core, test_gap);

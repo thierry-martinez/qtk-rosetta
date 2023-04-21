@@ -34,10 +34,10 @@ def test_gap(f):
     qr = qiskit.QuantumRegister(N)
     qc = qiskit.QuantumCircuit(qr)
     qc.append(iqp_gap.qiskit.gap(f), qr)
-    qc.save_density_matrix()
-    dm_backend = qiskit.providers.aer.Aer.get_backend("aer_simulator")
-    qc = qiskit.transpile(qc, dm_backend)
-    dm = dm_backend.run(qc).result().data().get("density_matrix")
-    result = np.array(dm)[0, 0]
+    qc.save_statevector()
+    simulator = qiskit.providers.aer.Aer.get_backend("aer_simulator")
+    qc = qiskit.transpile(qc, simulator)
+    sv = simulator.run(qc).result().data().get("statevector")
+    result = sv.probabilities()[0]
     analytical_result = (iqp_gap.gap(f) / 2**N) ** 2
     np.testing.assert_almost_equal(result, analytical_result)

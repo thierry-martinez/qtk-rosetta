@@ -25,10 +25,9 @@ def gap(poly):
     >>> _, x, y, z, t = sympy.polys.rings.ring('x, y, z, t', sympy.GF(2))
     >>> qc = gap(x * y + x * z + y * z + x)
     >>> initial_state = qutip.tensor(*(qutip.basis(2, 0) for _ in range(4)))
-    >>> initial_density_matrix = initial_state * initial_state.dag()
     >>> np.testing.assert_almost_equal( \
-            qc.run(initial_density_matrix)[0][0][0], \
-            (8 / 2 ** 4) ** 2 \
+            np.abs(qc.run(initial_state)[0][0]), \
+            8 / 2 ** 4 \
         )
     >>> gap(x + 1)
     Traceback (most recent call last):

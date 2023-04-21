@@ -34,13 +34,7 @@ def test_gap(f):
     N = f.parent().ngens
     qc = iqp_gap.qutip.gap(f)
     initial_state = qutip.tensor(*(qutip.basis(2, 0) for _ in range(N)))
-    initial_density_matrix = initial_state * initial_state.dag()
-    result_density_matrix = qc.run(initial_density_matrix)
-    result = result_density_matrix
-    while True:
-        try:
-            result = result[0]
-        except IndexError:
-            break
-    analytical_result = (iqp_gap.gap(f) / 2**N) ** 2
+    result_state = qc.run(initial_state)
+    result = np.abs(result_state[0][0][0])
+    analytical_result = np.abs(iqp_gap.gap(f) / 2**N)
     np.testing.assert_almost_equal(result, analytical_result)

@@ -11,23 +11,7 @@ import numpy as np
 import hypothesis
 
 
-@hypothesis.strategies.composite
-def poly_deg_3_st(draw):
-    N = draw(hypothesis.strategies.integers(min_value=1, max_value=8))
-    _, *x = sympy.polys.rings.ring(",".join([f"x{i}" for i in range(N)]), sympy.GF(2))
-    return draw(
-        hypothesis.strategies.lists(
-            hypothesis.strategies.lists(
-                hypothesis.strategies.sampled_from(x), min_size=1, max_size=3
-            )
-            .map(sympy.prod)
-            .filter(lambda n: n != 1),
-            min_size=1,
-        ).map(sum)
-    )
-
-
-@hypothesis.given(poly_deg_3_st())
+@hypothesis.given(iqp_gap.poly_st(3))
 @hypothesis.settings(deadline=400)
 def test_gap(f):
     N = f.parent().ngens

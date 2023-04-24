@@ -9,11 +9,8 @@ import iqp_gap.qutip
 import numpy as np
 import hypothesis
 
-# We set MAX_DEG to 2 because qutip does not support CCZ gates yet
-MAX_DEG = 2
 
-
-@hypothesis.given(iqp_gap.poly_st(MAX_DEG))
+@hypothesis.given(iqp_gap.poly_st(3))
 @hypothesis.settings(deadline=400)
 def test_gap(f):
     N = f.parent().ngens

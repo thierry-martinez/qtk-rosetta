@@ -52,7 +52,9 @@ def gap(poly):
                 qc.add_gate("CZ", targets=[xi], controls=[xj])
             case [xi, xj, xk]:
                 # CCZ gate is not provided by qutip yet
-                qc.add_gate("CCZ", targets=[xi], controls=[xj, xk])
+                qc.add_gate("SNOT", targets=[xi])
+                qc.add_gate("TOFFOLI", targets=[xi], controls=[xj, xk])
+                qc.add_gate("SNOT", targets=[xi])
             case _:
                 raise Exception(
                     f"""Unsupported monomial: {

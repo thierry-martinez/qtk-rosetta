@@ -9,6 +9,7 @@ Reference: https://arxiv.org/pdf/1504.07999.pdf
 
 import qiskit
 import iqp_gap
+import qiskit.providers.aer
 
 
 def gap(poly):
@@ -57,4 +58,20 @@ def gap(poly):
                 )
     for i in range(N):
         qc.h(i)
-    return qiskit.quantum_info.operators.Operator(qc.to_gate(label="iqp"))
+    # return qiskit.quantum_info.operators.Operator(qc.to_gate(label="iqp"))
+    return qc
+
+
+def evaluate_gap(poly):
+    """
+    Estimate the gap of degree-3 polynomials using IQP circuits
+    """
+    N = poly.parent().ngens
+    qr = qiskit.QuantumRegister(N)
+    qc = qiskit.QuantumCircuit(qr)
+    qc.append(iqp_gap.qiskit.gap(poly), qr)
+    qc.save_statevector()
+    simulator = qiskit.providers.aer.Aer.get_backend("aer_simulator")
+    qc = qiskit.transpile(qc, simulator)
+    sv = simulator.run(qc).result().data().get("statevector")
+    return sv.probabilities()[0]

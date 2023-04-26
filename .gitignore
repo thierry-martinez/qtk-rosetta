@@ -4,3 +4,7 @@ __pycache__/
 /iqp_gap/quest/check_iqp_gap
 *.o
 /deps/_build/
+/iqp_gap/quest/benchmark
+*-results.txt
+plot.svg
+/infrastructure/id_rsa*

@@ -7,4 +7,4 @@ Reference: https://arxiv.org/pdf/1504.07999.pdf
     Michael J. Bremner,1 Ashley Montanaro,2 and Dan J. Shepherd
 """
 
-from .iqp_gap import gap
+from .circuit import gap, evaluate_gap

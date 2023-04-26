@@ -3,7 +3,9 @@
 #include <string.h>
 #include "gap.h"
 
-struct polynomial *alloc_polynomial(size_t length, size_t variables, struct monomial *monomials) {
+struct polynomial *alloc_polynomial(size_t length, size_t variables,
+                                    struct monomial *monomials)
+{
   size_t sz =
     sizeof(struct polynomial) + sizeof(struct monomial) * (length - 1);
   struct polynomial *result = malloc(sz);
@@ -15,11 +17,10 @@ struct polynomial *alloc_polynomial(size_t length, size_t variables, struct mono
   return result;
 }
 
-int sum_gap_rec(
-   struct polynomial *polynomial,
-   bool valuation[polynomial->variables],
-   int k
-) {
+int
+sum_gap_rec(struct polynomial *polynomial,
+            bool valuation[polynomial->variables], int k)
+{
   if (k < polynomial->variables) {
     valuation[k] = 0;
     int gap_for_0 = sum_gap_rec(polynomial, valuation, k + 1);
@@ -35,7 +36,7 @@ int sum_gap_rec(
       bool value = 1;
       short d;
       for (d = 0; d < monomial.degree; d++) {
-	value = value && valuation[monomial.x[d]];
+        value = value && valuation[monomial.x[d]];
       }
       sum = sum ^ value;
     }
@@ -48,12 +49,14 @@ int sum_gap_rec(
   }
 }
 
-int gap(struct polynomial *polynomial) {
-   bool valuation[polynomial->variables];
-   return sum_gap_rec(polynomial, valuation, 0);
+int gap(struct polynomial *polynomial)
+{
+  bool valuation[polynomial->variables];
+  return sum_gap_rec(polynomial, valuation, 0);
 }
 
-struct monomial random_monomial(size_t variables, size_t max_degree) {
+struct monomial random_monomial(size_t variables, size_t max_degree)
+{
   struct monomial result;
   result.degree = 1 + rand() % max_degree;
   if (result.degree > variables) {
@@ -75,7 +78,7 @@ struct monomial random_monomial(size_t variables, size_t max_degree) {
     for (p = 0; p < rank; p++) {
       index++;
       while (taken[index]) {
-	index++;
+        index++;
       }
     }
     taken[index] = true;
@@ -84,9 +87,9 @@ struct monomial random_monomial(size_t variables, size_t max_degree) {
   return result;
 }
 
-struct polynomial *random_polynomial(
-  size_t max_length, size_t max_variables, size_t max_degree
-) {
+struct polynomial *random_polynomial(size_t max_length, size_t max_variables,
+                                     size_t max_degree)
+{
   size_t length = rand() % max_length;
   size_t variables = 1 + rand() % max_variables;
   size_t i;
@@ -97,7 +100,8 @@ struct polynomial *random_polynomial(
   return result;
 }
 
-void output_monomial(FILE *stream, struct monomial monomial) {
+void output_monomial(FILE * stream, struct monomial monomial)
+{
   int i;
   fprintf(stream, "x%d", monomial.x[0]);
   for (i = 1; i < monomial.degree; i++) {
@@ -105,7 +109,8 @@ void output_monomial(FILE *stream, struct monomial monomial) {
   }
 }
 
-void output_polynomial(FILE *stream, struct polynomial *polynomial) {
+void output_polynomial(FILE * stream, struct polynomial *polynomial)
+{
   if (polynomial->length == 0) {
     fprintf(stream, "0");
     return;

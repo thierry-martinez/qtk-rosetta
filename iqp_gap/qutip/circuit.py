@@ -9,7 +9,9 @@ Reference: https://arxiv.org/pdf/1504.07999.pdf
 """
 
 import iqp_gap
+import numpy as np
 import qutip
+import sympy
 
 
 def gap(poly):
@@ -64,3 +66,15 @@ def gap(poly):
     for i in range(N):
         qc.add_gate("SNOT", targets=[i])
     return qc
+
+
+def evaluate_gap(poly):
+    """
+    Estimate the gap of degree-3 polynomials using IQP circuits
+    """
+    N = poly.parent().ngens
+    qc = iqp_gap.qutip.gap(poly)
+    initial_state = qutip.tensor(*(qutip.basis(2, 0) for _ in range(N)))
+    result_state = qc.run(initial_state)
+    result_complex = result_state[0][0][0]
+    return np.abs(result_complex) ** 2

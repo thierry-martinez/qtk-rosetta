@@ -9,4 +9,6 @@
 
 void iqp_gap(Qureg qureg, struct polynomial *polynomial);
 
+qreal evaluate_gap(struct polynomial *polynomial, QuESTEnv env);
+
 #endif

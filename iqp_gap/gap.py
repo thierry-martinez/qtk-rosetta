@@ -40,19 +40,32 @@ def polynomial_of_monomial(monomial, polyring):
 
 
 @hypothesis.strategies.composite
-def poly_st(draw, max_degree):
+def poly_st(
+    draw,
+    min_length=1,
+    max_length=8,
+    min_degree=1,
+    max_degree=3,
+    min_variables=1,
+    max_variables=8,
+):
     """
     Hypothesis strategy to generate polynomials
     """
-    N = draw(hypothesis.strategies.integers(min_value=1, max_value=8))
+    N = draw(
+        hypothesis.strategies.integers(min_value=min_variables, max_value=max_variables)
+    )
     _, *x = sympy.polys.rings.ring(",".join([f"x{i}" for i in range(N)]), sympy.GF(2))
     return draw(
         hypothesis.strategies.lists(
             hypothesis.strategies.lists(
-                hypothesis.strategies.sampled_from(x), min_size=1, max_size=max_degree
+                hypothesis.strategies.sampled_from(x),
+                min_size=min_degree,
+                max_size=max_degree,
             )
             .map(sympy.prod)
             .filter(lambda n: n != 1),
-            min_size=1,
+            min_size=min_length,
+            max_size=max_length,
         ).map(sum)
     )

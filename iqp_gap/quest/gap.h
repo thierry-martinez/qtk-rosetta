@@ -15,20 +15,18 @@ struct polynomial {
   struct monomial monomials[1];
 };
 
-struct polynomial *alloc_polynomial(
-  size_t length, size_t variables, struct monomial *monomials
-);
+struct polynomial *alloc_polynomial(size_t length, size_t variables,
+                                    struct monomial *monomials);
 
 int gap(struct polynomial *polynomial);
 
 struct monomial random_monomial(size_t variables, size_t max_degree);
 
-struct polynomial *random_polynomial(
-  size_t max_length, size_t max_variables, size_t max_degree
-);
+struct polynomial *random_polynomial(size_t max_length, size_t max_variables,
+                                     size_t max_degree);
 
-void output_monomial(FILE *stream, struct monomial monomial);
+void output_monomial(FILE * stream, struct monomial monomial);
 
-void output_polynomial(FILE *stream, struct polynomial *polynomial);
+void output_polynomial(FILE * stream, struct polynomial *polynomial);
 
 #endif

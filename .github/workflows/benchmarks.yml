@@ -1,0 +1,116 @@
+on: [push, pull_request]
+permissions:
+  contents: write
+jobs:
+  qiskit:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python requirements
+        run: |
+          pip install -r requirements.txt
+      - name: Benchmark IQP gap
+        run: |
+          make -C iqp_gap/benchmarks qiskit-results.txt
+      - name: Save benchmarks
+        uses: actions/upload-artifact@v3
+        with:
+          name: qiskit-benchmarks
+          path: |
+            iqp_gap/benchmarks/qiskit-results.txt
+  qutip:
+    runs-on: self-hosted
+#    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python requirements
+        run: |
+          pip install -r requirements.txt
+      - name: Benchmark IQP gap
+        run: |
+          make -C iqp_gap/benchmarks qutip-results.txt
+      - name: Save benchmarks
+        uses: actions/upload-artifact@v3
+        with:
+          name: qutip-benchmarks
+          path: |
+            iqp_gap/benchmarks/qutip-results.txt
+  quest:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup QuEST
+        run: |
+          cd deps
+          ./initialize.sh
+      - name: Benchmark IQP gap
+        run: |
+          make -C iqp_gap/quest benchmark
+          make -C iqp_gap/benchmarks quest-results.txt
+      - name: Save benchmarks
+        uses: actions/upload-artifact@v3
+        with:
+          name: quest-benchmarks
+          path: |
+            iqp_gap/benchmarks/quest-results.txt
+  plot:
+    needs:
+      - qiskit
+      - qutip
+      - quest
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python requirements
+        run: |
+          pip install -r requirements.txt
+      - name: Download qiskit benchmarks
+        uses: actions/download-artifact@v3
+        with:
+          name: qiskit-benchmarks
+      - name: Download qutip benchmarks
+        uses: actions/download-artifact@v3
+        with:
+          name: qutip-benchmarks
+      - name: Download quest benchmarks
+        uses: actions/download-artifact@v3
+        with:
+          name: quest-benchmarks
+      - name: Plot benchmarks
+        run: |
+           mv qiskit-results.txt qutip-results.txt quest-results.txt \
+             iqp_gap/benchmarks
+           cd iqp_gap/benchmarks && PYTHONPATH=../.. \
+           python3 benchmarks.py -o plot.svg instances.txt \
+             qiskit:qiskit-results.txt \
+             qutip:qutip-results.txt \
+             quest:quest-results.txt
+      - name: Save plot
+        uses: actions/upload-artifact@v3
+        with:
+          name: iqp-plot
+          path: |
+            iqp_gap/benchmarks/plot.svg
+  deploy-plot:
+    needs: plot
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download plot
+        uses: actions/download-artifact@v3
+        with:
+          name: iqp-plot
+      - name: Move plot to deploy
+        run: |
+          mkdir deploy
+          mv plot.svg deploy/
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: deploy

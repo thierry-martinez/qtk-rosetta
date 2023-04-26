@@ -1,6 +1,20 @@
 repos:
--   repo: https://github.com/psf/black
-    rev: stable
-    hooks:
+- repo: https://github.com/psf/black
+  rev: 23.3.0
+  hooks:
     - id: black
-      language_version: python3.11
+      language_version: python3.10
+- repo: local
+  hooks:
+    - id: gnu-indent
+      name: gnu-indent
+      entry: indent -kr -ci2 -cli2 -i2 -l80 -nut -nce
+      language: system
+      types: [c]
+      pass_filenames: true
+    - id: boon
+      name: boon
+      entry: boon infrastructure/github-workflow.json
+      language: system
+      files: ^.github/workflows/.*\.yml$
+      pass_filenames: true

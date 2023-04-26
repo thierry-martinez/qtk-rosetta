@@ -6,11 +6,11 @@
 #include <QuEST.h>
 
 #include "gap.h"
-#include "iqp_gap.h"
+#include "circuit.h"
 
-START_TEST (test_gap)
+START_TEST(test_gap)
 {
-  struct monomial x = { 1, {0, 0, 0} };
+  struct monomial x = { 1, { 0, 0, 0 } };
   {
     struct polynomial *p = alloc_polynomial(1, 1, &x);
     ck_assert_int_eq(gap(p), 0);
@@ -23,27 +23,24 @@ START_TEST (test_gap)
     free(p);
   }
 }
-END_TEST
 
-START_TEST (test_iqp_gap)
+END_TEST START_TEST(test_iqp_gap)
 {
   QuESTEnv env = createQuESTEnv();
   srand(time(NULL));
   int i;
   for (i = 0; i < 64; i++) {
-    struct polynomial *p = random_polynomial(16, 16, 3);
-    Qureg qureg = createQureg(p->variables, env);
-    iqp_gap(qureg, p);
-    qreal result = getProbAmp(qureg, 0);
-    double analytical_result = pow(((double) gap(p)) / (1 << p->variables), 2);
+    struct polynomial *polynomial = random_polynomial(16, 16, 3);
+    qreal result = evaluate_gap(polynomial, env);
+    double analytical_result =
+      pow(((double) gap(polynomial)) / (1 << polynomial->variables), 2);
     ck_assert_float_eq_tol(result, analytical_result, 0.0001);
-    destroyQureg(qureg, env);
-    free(p);
+    free(polynomial);
   }
 }
-END_TEST
 
-Suite *iqp_gap_suite(void) {
+END_TEST Suite *iqp_gap_suite(void)
+{
   Suite *s;
   TCase *tc_core;
   s = suite_create("iqp_gap");
@@ -55,7 +52,8 @@ Suite *iqp_gap_suite(void) {
   return s;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   int number_failed;
   Suite *s;
   SRunner *sr;

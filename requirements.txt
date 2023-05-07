@@ -1,7 +1,0 @@
-black
-hypothesis
-matplotlib
-pre-commit
-pytest
-qiskit
-qutip

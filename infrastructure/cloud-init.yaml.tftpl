@@ -1,0 +1,38 @@
+#cloud-config
+users:
+  - name: ci
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ${SSH_PUBLIC_KEY}
+  - name: github-runner
+
+package_update: true
+package_upgrade: true
+packages:
+  - python3-pip
+  - cmake
+  - autoconf
+  - automake
+  - libtool
+  - pkg-config
+  - texinfo
+
+write_files:
+  - path: /home/ci/configure-github-runner.sh
+    owner: ci:ci
+    permissions: '0644'
+    content: |
+      set -ex
+      mkdir ~/actions-runner && cd ~/actions-runner
+      curl -o actions-runner-linux-x64-2.303.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.303.0/actions-runner-linux-x64-2.303.0.tar.gz
+      echo "e4a9fb7269c1a156eb5d5369232d0cd62e06bec2fd2b321600e85ac914a9cc73  actions-runner-linux-x64-2.303.0.tar.gz" | shasum -a 256 -c
+      tar xzf ./actions-runner-linux-x64-2.303.0.tar.gz
+      ./config.sh --unattended --url https://github.com/thierry-martinez/qtk-rosetta --token ${GITHUB_TOKEN} --replace
+      sudo ./svc.sh install github-runner
+      touch .credentials_rsaparams
+      mkdir _work
+      sudo chown github-runner .credentials_rsaparams _work _diag
+      sudo ./svc.sh start
+
+runcmd:
+  - su ci /home/ci/configure-github-runner.sh
